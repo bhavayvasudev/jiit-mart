@@ -1,20 +1,37 @@
 @import "tailwindcss";
 
-/* ------------------------------
-   TAILWIND V4 THEME TOKENS
---------------------------------*/
 @theme {
-  --color-background: hsl(232 34% 17%);
-  --color-foreground: hsl(192 29% 73%);
+  /* NIKE WHITE + GLASS PALETTE */
+  --color-background: hsl(0 0% 92%); /* Light Grey #EBEBEB */
+  --color-foreground: hsl(0 0% 9%);  /* Almost Black #171717 */
 
-  --color-card: hsl(222 84% 8%);
-  --color-card-foreground: hsl(210 40% 98%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(0 0% 9%);
 
-  --color-primary: hsl(210 50% 55%);
-  --color-primary-foreground: hsl(222 84% 4.9%);
+  --color-primary: hsl(0 0% 9%);     /* Black Buttons */
+  --color-primary-foreground: hsl(0 0% 100%);
 
-  --color-muted: hsl(217 33% 18%);
-  --color-muted-foreground: hsl(215 20% 65%);
+  --color-muted: hsl(0 0% 96%);      /* Very Light Grey */
+  --color-muted-foreground: hsl(0 0% 45%);
 
-  --color-border: hsl(217 33% 22%);
+  --color-border: hsl(0 0% 90%);
+  --color-input: hsl(0 0% 96%);
+  
+  --color-destructive: hsl(0 84% 60%);
+}
+
+@layer utilities {
+  .glass {
+    /* White Glass: Semi-transparent white with blur */
+    @apply bg-white/60 backdrop-blur-2xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)];
+  }
+}
+
+/* CUSTOM CURSOR LOGIC */
+@media (hover: hover) and (pointer: fine) {
+  /* We only need to hide the default cursor. 
+     The visible arrow is now rendered by CustomCursor.jsx */
+  body, a, button, input, select, textarea, [role="button"] {
+    cursor: none !important;
+  }
 }
