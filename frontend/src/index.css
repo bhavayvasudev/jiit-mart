@@ -1,65 +1,20 @@
 @import "tailwindcss";
-@plugin "tailwindcss-animate";
 
+/* ------------------------------
+   TAILWIND V4 THEME TOKENS
+--------------------------------*/
 @theme {
-  --radius: 0.5rem;
-  
-  /* JPortal Animation Timing */
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
-  
-  @keyframes accordion-down {
-    from { height: 0 }
-    to { height: var(--radix-accordion-content-height) }
-  }
-  @keyframes accordion-up {
-    from { height: var(--radix-accordion-content-height) }
-    to { height: 0 }
-  }
-}
+  --color-background: hsl(232 34% 17%);
+  --color-foreground: hsl(192 29% 73%);
 
-:root {
-  /* The "JPortal Dark" Palette */
-  --background: 232 34% 17%; /* Deep Blue/Black */
-  --foreground: 192 29% 73%; /* Soft Cyan/Gray Text */
-  
-  --card: 222 84% 4.9%; 
-  --card-foreground: 210 40% 98%;
-  
-  --popover: 222 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
-  
-  --primary: 210 50% 55%; /* The Iconic JPortal Blue */
-  --primary-foreground: 222.2 84% 4.9%;
-  
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
-  
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98%;
-  
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-  
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 210 40% 98%;
-}
+  --color-card: hsl(222 84% 8%);
+  --color-card-foreground: hsl(210 40% 98%);
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1; /* Typography fix */
-  }
-}
+  --color-primary: hsl(210 50% 55%);
+  --color-primary-foreground: hsl(222 84% 4.9%);
 
-/* Utilities for Glassmorphism */
-.glass {
-  @apply bg-white/5 backdrop-blur-lg border border-white/10;
+  --color-muted: hsl(217 33% 18%);
+  --color-muted-foreground: hsl(215 20% 65%);
+
+  --color-border: hsl(217 33% 22%);
 }

@@ -1,38 +1,53 @@
-import { ChartNoAxesCombined, ArrowLeft, Moon } from "lucide-react";
+import { Moon } from "lucide-react";
+import { motion } from "framer-motion";
 
-const PublicHeader = ({ showStatsButton = false, showBackButton = false, onBack }) => {
+export default function PublicHeader() {
   return (
-    <header className="bg-white/80 backdrop-blur-md mx-auto px-4 py-3 sticky top-0 z-50 border-b border-gray-100">
-      <div className="container mx-auto flex justify-between items-center">
-        
-        {/* Left Side: Back & Logo */}
-        <div className="flex items-center gap-3">
-          {showBackButton && (
-            <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-              <ArrowLeft size={20} className="text-gray-600" />
-            </button>
-          )}
-          {/* Changed Name to JIITMart */}
-          <h1 className="text-blue-900 text-2xl font-bold font-sans tracking-tight">JIITMart</h1>
-        </div>
+    <header
+      className="
+        sticky top-0 z-50
+        h-16
+        border-b border-white/10
+        bg-background/70
+        backdrop-blur-xl
+      "
+    >
+      <div
+        className="
+          mx-auto
+          flex h-full max-w-6xl
+          items-center justify-between
+          px-6
+        "
+      >
+        {/* Brand */}
+        <span
+          className="
+            text-xl font-semibold
+            tracking-tight
+            text-white
+          "
+        >
+          JIITMart
+        </span>
 
-        {/* Right Side: Icons */}
-        <div className="flex items-center gap-2">
-          {showStatsButton && (
-            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-              <ChartNoAxesCombined size={20} className="text-gray-600" />
-            </button>
-          )}
-          
-          <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <Moon size={20} className="text-gray-600" />
-          </button>
-          
-          <div className="w-2"></div>
-        </div>
+        {/* Actions */}
+        <motion.button
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.96 }}
+          transition={motionMedium}
+          className="
+            rounded-full
+            p-2
+            text-white/80
+            hover:bg-white/10
+            focus:outline-none
+          "
+          aria-label="Toggle theme"
+        >
+          <Moon size={18} />
+        </motion.button>
       </div>
     </header>
   );
-};
-
-export default PublicHeader;
+}
