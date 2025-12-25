@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 
+// PAGES
 import Login from "./pages/Login";
-import Home from "./pages/Home";
+import Home from "./pages/Home"; // ✅ FIXED: Changed 'home' to 'Home'
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
 import Print from "./pages/Print";
+import AcademicCalendar from "./pages/AcademicCalendar"; // ✅ ADDED
+import MessMenu from "./pages/MessMenu"; // ✅ ADDED
 
-import PublicHeader from "./components/PublicHeader";
+// LAYOUT & COMPONENTS
+import MainLayout from "./layouts/MainLayout";
 import CustomCursor from "./components/ui/CustomCursor";
-import Toast from "./components/ui/Toast";
-import FloatingCart from "./components/FloatingCart";
 
 /* -----------------------------
    MOCK BACKEND
@@ -23,7 +25,7 @@ const w = {
 };
 
 export default function App() {
-  // --- GLOBAL STATE ---
+  // --- STATE ---
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem("username");
     return saved ? { name: saved } : null;
@@ -72,12 +74,6 @@ export default function App() {
     });
   };
 
-  const handleLoginSuccess = () => {
-    localStorage.setItem("username", "student");
-    setUser({ name: "student" });
-    setView("home");
-  };
-
   const handleSignOut = () => {
     localStorage.removeItem("username");
     setUser(null);
@@ -88,25 +84,18 @@ export default function App() {
   const addToCart = (item) => {
     setCart((prev) => {
       const existing = prev.find((i) => i._id === item._id);
-      if (existing) {
-        return prev.map((i) => i._id === item._id ? { ...i, qty: (i.qty || 1) + 1 } : i);
-      }
+      if (existing) return prev.map((i) => i._id === item._id ? { ...i, qty: (i.qty || 1) + 1 } : i);
       return [...prev, { ...item, qty: 1 }];
     });
-    if (!cart.find((c) => c._id === item._id)) {
-      setToastMsg(`${item.name} added`);
-    }
+    if (!cart.find((c) => c._id === item._id)) setToastMsg(`${item.name} added`);
   };
 
   const removeFromCart = (itemOrIndex, decrease = false) => {
     setCart((prev) => {
       if (decrease) {
-        const item = itemOrIndex;
-        return prev.map((i) => (i._id === item._id ? { ...i, qty: i.qty - 1 } : i)).filter((i) => i.qty > 0);
-      } else {
-        const index = itemOrIndex;
-        return prev.filter((_, i) => i !== index);
+        return prev.map((i) => (i._id === itemOrIndex._id ? { ...i, qty: i.qty - 1 } : i)).filter((i) => i.qty > 0);
       }
+      return prev.filter((_, i) => i !== itemOrIndex);
     });
   };
 
@@ -140,26 +129,22 @@ export default function App() {
   };
 
   // --- RENDER ---
-  if (!user) return <><CustomCursor /><Login onLoginSuccess={handleLoginSuccess} w={w} isDarkMode={isDarkMode} toggleTheme={toggleTheme} /></>;
-
-  // Common Wrapper
-  const Layout = ({ children }) => (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-500">
+  if (!user) return (
+    <>
       <CustomCursor />
-      <PublicHeader isDarkMode={isDarkMode} toggleTheme={toggleTheme} onSignOut={handleSignOut} />
-      {children}
-      <FloatingCart cart={cart} printFile={printFile} setView={setView} />
-      <AnimatePresence>
-        {toastMsg && <Toast message={toastMsg} onClose={() => setToastMsg(null)} />}
-      </AnimatePresence>
-    </div>
+      <Login onLoginSuccess={() => { setUser({name:"student"}); setView("home"); }} w={w} isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+    </>
   );
 
   return (
-    <Layout>
+    <MainLayout 
+      user={user} cart={cart} printFile={printFile} setView={setView}
+      isDarkMode={isDarkMode} toggleTheme={toggleTheme} handleSignOut={handleSignOut}
+      toastMsg={toastMsg} setToastMsg={setToastMsg}
+    >
       {view === "home" && <Home setView={setView} />}
       
-      {/* Reuse Shop Component for Canteen & Mart */}
+      {/* Reusable Shop Component */}
       {view === "canteen" && <Shop category="food" products={products} cart={cart} addToCart={addToCart} removeFromCart={removeFromCart} setView={setView} />}
       {view === "mart" && <Shop category="essential" products={products} cart={cart} addToCart={addToCart} removeFromCart={removeFromCart} setView={setView} />}
       
@@ -175,6 +160,10 @@ export default function App() {
       )}
       
       {view === "print" && <Print handleFileUpload={handleFileUpload} loading={loading} setView={setView} />}
-    </Layout>
+
+      {/* NEW ROUTES */}
+      {view === "calendar" && <AcademicCalendar setView={setView} />}
+      {view === "mess" && <MessMenu setView={setView} />}
+    </MainLayout>
   );
 }

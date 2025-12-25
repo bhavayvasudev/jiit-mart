@@ -29,10 +29,9 @@ export default function Cart({
         <h2 className="text-3xl font-bold mb-8 text-foreground">Checkout</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* LEFT COLUMN: Items & Location */}
           <div className="md:col-span-2 space-y-6">
             
-            {/* 1. Items List */}
+            {/* Items */}
             <div className="glass rounded-3xl p-6">
               <h3 className="text-lg font-semibold mb-4 text-foreground flex items-center gap-2">
                 <ShoppingBag size={18} /> Order Summary
@@ -48,7 +47,6 @@ export default function Cart({
                         <p className="text-xs text-muted-foreground">₹{i.price} / unit</p>
                       </div>
                       <div className="flex items-center gap-4">
-                        {/* Simple +/- controls for Cart View */}
                         <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
                           <button onClick={() => updateQuantity(idx, -1)} className="p-1 hover:bg-background rounded"><Minus size={14} /></button>
                           <span className="text-sm font-bold min-w-[20px] text-center">{i.qty || 1}</span>
@@ -72,7 +70,7 @@ export default function Cart({
               )}
             </div>
 
-            {/* 2. Delivery Location */}
+            {/* Locations */}
             <div className="glass rounded-3xl p-6">
               <h3 className="text-lg font-semibold mb-4 text-foreground flex items-center gap-2">
                 <MapPin size={18} /> Delivery Location
@@ -99,7 +97,6 @@ export default function Cart({
             </div>
           </div>
 
-          {/* RIGHT COLUMN: Payment & Bill */}
           <div className="md:col-span-1 space-y-6">
             <div className="glass rounded-3xl p-6">
               <h3 className="text-lg font-semibold mb-4 text-foreground">Payment</h3>

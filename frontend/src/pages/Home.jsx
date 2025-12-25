@@ -1,4 +1,4 @@
-import { Utensils, ShoppingBag, Printer } from "lucide-react";
+import { Utensils, ShoppingBag, Printer, Calendar, Coffee } from "lucide-react";
 
 export default function Home({ setView }) {
   const actions = [
@@ -8,7 +8,7 @@ export default function Home({ setView }) {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-[calc(100vh-80px)] flex flex-col">
       <main className="flex-1 flex flex-col items-center justify-center px-6">
         <h2 className="mb-12 text-2xl md:text-3xl font-semibold text-foreground/80 text-center">
           What do you want to do?
@@ -31,6 +31,27 @@ export default function Home({ setView }) {
           ))}
         </div>
       </main>
+
+      {/* NEW FOOTER */}
+      <footer className="border-t border-border bg-background/60 backdrop-blur-xl w-full mt-auto">
+        <div className="mx-auto flex flex-wrap items-center justify-center gap-6 px-6 py-6">
+          <button 
+            onClick={() => setView("calendar")}
+            className="glass px-6 py-3 rounded-xl text-sm font-bold text-foreground transition-transform hover:scale-105 hover:bg-primary/5 flex items-center gap-2 border border-white/10"
+          >
+            <Calendar size={18} className="text-primary" /> 
+            Academic Calendar
+          </button>
+          
+          <button 
+            onClick={() => setView("mess")}
+            className="glass px-6 py-3 rounded-xl text-sm font-bold text-foreground transition-transform hover:scale-105 hover:bg-primary/5 flex items-center gap-2 border border-white/10"
+          >
+            <Coffee size={18} className="text-primary" /> 
+            Mess Menu
+          </button>
+        </div>
+      </footer>
     </div>
   );
 }
