@@ -1,77 +1,58 @@
 import { Moon, Sun, LogOut } from "lucide-react";
 import { motion } from "framer-motion";
 import { motionMedium } from "./ui/motion";
+import { useEffect, useState } from "react";
 
-export default function PublicHeader({ isDarkMode, toggleTheme, onSignOut }) {
+export default function PublicHeader({ onSignOut }) {
+  const [isDarkMode, setIsDarkMode] = useState(
+    localStorage.getItem("theme") === "dark"
+  );
+
+  useEffect(() => {
+    const root = document.documentElement;
+
+    if (isDarkMode) {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      root.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
+
   return (
-    <header
-      className="
-        sticky top-0 z-50
-        h-16
-        bg-white/40 backdrop-blur-md
-        border-b border-white/20
-      "
-    >
-      <div
-        className="
-          mx-auto
-          flex h-full max-w-6xl
-          items-center justify-between
-          px-6
-        "
-      >
-        {/* Brand - Smart: Click to Reload */}
+    <header className="sticky top-0 z-50 h-16 bg-background/70 backdrop-blur-md border-b border-border">
+      <div className="mx-auto flex h-full max-w-6xl items-center justify-between px-6">
+        {/* Brand */}
         <button
           onClick={() => window.location.reload()}
-          className="
-            text-2xl font-extrabold
-            tracking-tighter
-            uppercase
-            text-foreground
-            focus:outline-none
-            hover:opacity-80 transition-opacity
-          "
-          title="Reload Application"
+          className="text-2xl font-extrabold tracking-tighter uppercase text-foreground hover:opacity-80 transition"
         >
           JIITMart
         </button>
 
-        {/* Actions - Smart: Theme & Sign Out */}
+        {/* Actions */}
         <div className="flex items-center gap-3">
-          {/* Theme Toggle */}
+          {/* THEME TOGGLE */}
           <motion.button
-            onClick={toggleTheme}
+            onClick={() => setIsDarkMode(!isDarkMode)}
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.96 }}
             transition={motionMedium}
-            className="
-              rounded-full
-              p-2
-              text-foreground
-              hover:bg-black/5
-              focus:outline-none
-            "
+            className="rounded-full p-2 text-foreground hover:bg-muted"
             aria-label="Toggle theme"
           >
             {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
           </motion.button>
 
-          {/* Sign Out - Extreme Right */}
+          {/* SIGN OUT */}
           {onSignOut && (
             <motion.button
               onClick={onSignOut}
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.96 }}
               transition={motionMedium}
-              className="
-                rounded-full
-                p-2
-                text-foreground
-                hover:bg-black/5
-                focus:outline-none
-              "
-              aria-label="Sign out"
-              title="Sign Out"
+              className="rounded-full p-2 text-foreground hover:bg-muted"
             >
               <LogOut size={20} />
             </motion.button>
