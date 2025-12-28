@@ -1,131 +1,125 @@
-import { useState } from "react";
-import PublicHeader from "../components/PublicHeader";
+import { useState, useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
+// Assuming you use a similar library or standard fetch for JIITMart
+// import { LoginError } from "your-api-library"; 
 
-export default function Login({ onLoginSuccess, w, isDarkMode, toggleTheme }) {
-  const [enrollment, setEnrollment] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+const formSchema = z.object({
+  userId: z.string({
+    required_error: "User ID / Enrollment is required",
+  }),
+  password: z.string({
+    required_error: "Password is required",
+  }),
+});
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (loading) return;
-    const cleanEnrollment = enrollment.trim();
-    const cleanPassword = password.trim();
+export default function Login({ onLoginSuccess, backend }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-    if (!cleanEnrollment || !cleanPassword) {
-      setError("Please enter enrollment number and password");
-      return;
-    }
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      userId: "",
+      password: "",
+    },
+  });
 
-    if (!w || typeof w.student_login !== "function") {
-       console.warn("Backend unavailable, bypassing login");
-       onLoginSuccess();
-       return;
-    }
-
-    setError("");
-    setLoading(true);
-
+  const onSubmit = async (values) => {
+    setIsLoading(true);
     try {
-      await w.student_login(cleanEnrollment, cleanPassword);
-      localStorage.setItem("username", cleanEnrollment);
-      onLoginSuccess();
-    } catch (err) {
-      setError("Invalid enrollment number or password");
+      // --- LOGIC ADAPTATION START ---
+      // Determine role based on User ID pattern or API response
+      let identifiedRole = "student";
+      
+      // Example: Check for specific Owner IDs or Patterns
+      // In a real app, the API should return the role, but for client-side gating:
+      const owners = ["admin", "owner", "canteen_manager"];
+      if (owners.includes(values.userId.toLowerCase())) {
+        identifiedRole = "owner";
+      }
+
+      // Perform actual authentication (Replace with your JIITMart API call)
+      // await backend.login(values.userId, values.password);
+      
+      // Simulate API delay for demo
+      await new Promise(resolve => setTimeout(resolve, 800)); 
+
+      // Store session data
+      localStorage.setItem("jiitmart_user", values.userId);
+      localStorage.setItem("jiitmart_role", identifiedRole);
+      
+      toast.success(`Welcome back, ${identifiedRole === 'owner' ? 'Owner' : 'Student'}!`);
+      onLoginSuccess(identifiedRole);
+      // --- LOGIC ADAPTATION END ---
+
+    } catch (error) {
+      console.error("Login failed:", error);
+      toast.error("Invalid credentials. Please try again.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-500">
-      <PublicHeader isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-
-      <div className="flex min-h-[calc(100vh-80px)] items-center justify-center px-4">
-        <div
-          className="
-            glass w-full max-w-md p-10 rounded-3xl
-            transition-all duration-300 ease-out
-            animate-in fade-in zoom-in-95
-          "
-        >
-          <div className="mb-8 text-center">
-            <h1 className="text-4xl font-black tracking-tight uppercase">
-              Member Access
-            </h1>
-            <p className="mt-2 text-sm text-muted-foreground font-medium">
-              Use your enrollment number to sign in.
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <input
-                type="text"
-                value={enrollment}
-                onChange={(e) => setEnrollment(e.target.value)}
-                placeholder="Enrollment Number"
-                className="
-                  w-full rounded-2xl px-5 py-4 text-sm font-medium
-                  bg-black/5 dark:bg-white/5 border-transparent
-                  text-foreground placeholder:text-muted-foreground
-                  transition-all duration-300
-                  focus:bg-white dark:focus:bg-black/40 
-                  focus:ring-2 focus:ring-black/10 dark:focus:ring-white/10
-                  focus:scale-[1.01] outline-none
-                "
+    <div className="flex min-h-screen items-center justify-center p-4 bg-background">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>JIITMart Login</CardTitle>
+          <CardDescription>Enter your credentials to access the store</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="userId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>User ID / Enrollment</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter ID" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-
-            <div>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                className="
-                  w-full rounded-2xl px-5 py-4 text-sm font-medium
-                  bg-black/5 dark:bg-white/5 border-transparent
-                  text-foreground placeholder:text-muted-foreground
-                  transition-all duration-300
-                  focus:bg-white dark:focus:bg-black/40 
-                  focus:ring-2 focus:ring-black/10 dark:focus:ring-white/10
-                  focus:scale-[1.01] outline-none
-                "
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input type={showPassword ? "text" : "password"} {...field} />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((s) => !s)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+                        >
+                          {showPassword ? <Eye size={16} /> : <EyeOff size={16} />}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-
-            {error && (
-              <p className="text-sm font-semibold text-red-500 text-center animate-in fade-in">
-                {error}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="
-                mt-4 w-full rounded-full py-4
-                text-sm font-bold tracking-wide uppercase
-                text-primary-foreground
-                bg-primary
-                shadow-lg
-                transition-all duration-300 ease-out
-                hover:scale-[1.02] hover:shadow-xl
-                active:scale-95
-                disabled:opacity-50
-              "
-            >
-              {loading ? "Processing..." : "Sign In"}
-            </button>
-          </form>
-
-          <p className="mt-8 text-center text-xs font-semibold text-muted-foreground uppercase tracking-widest opacity-60">
-            JIIT Campus Only
-          </p>
-        </div>
-      </div>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Verifying..." : "Sign in"}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </div>
   );
 }
