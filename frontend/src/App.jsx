@@ -38,7 +38,7 @@ export default function App() {
   /* ======================
      CORE STATE
   ====================== */
-  const [appMode, setAppMode] = useState("student"); // 👈 NEW
+  const [appMode, setAppMode] = useState("student");
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem("username");
     return saved ? { name: saved } : null;
@@ -144,8 +144,9 @@ export default function App() {
       <>
         <CustomCursor />
         <Login
-          onLoginSuccess={() => {
-            setUser({ name: "student" });
+          onLoginSuccess={(role) => {
+            setUser({ name: role === "owner" ? "Owner" : "Student" });
+            setAppMode(role);
             setView("home");
           }}
           w={w}
@@ -161,9 +162,15 @@ export default function App() {
   ====================== */
   if (appMode === "owner") {
     return (
-      <OwnerLayout>
-        <OwnerDashboard />
-      </OwnerLayout>
+      <>
+        {/* 👇 FIXED: Added CustomCursor here. 
+            Without this, index.css hides the cursor, but nothing replaces it. 
+        */}
+        <CustomCursor /> 
+        <OwnerLayout>
+          <OwnerDashboard />
+        </OwnerLayout>
+      </>
     );
   }
 
@@ -181,7 +188,7 @@ export default function App() {
       handleSignOut={handleSignOut}
       toastMsg={toastMsg}
       setToastMsg={setToastMsg}
-      setAppMode={setAppMode} // 👈 allow switching
+      setAppMode={setAppMode} 
     >
       {view === "home" && <Home setView={setView} />}
 
