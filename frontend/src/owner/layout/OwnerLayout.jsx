@@ -1,13 +1,22 @@
 import OwnerSidebar from "../components/OwnerSidebar";
 
-export default function OwnerLayout({ children }) {
+export default function OwnerLayout({
+  children,
+  activeTab,
+  setActiveTab,
+  onLogout,
+}) {
   return (
-    <div className="min-h-screen flex bg-background text-foreground">
+    <div className="flex min-h-screen bg-gray-50 text-gray-900">
       {/* Sidebar */}
-      <OwnerSidebar />
+      <OwnerSidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onLogout={onLogout}
+      />
 
-      {/* Main Content */}
-      <main className="flex-1 p-6">
+      {/* Main content */}
+      <main className="flex-1 p-8 overflow-y-auto">
         {children}
       </main>
     </div>

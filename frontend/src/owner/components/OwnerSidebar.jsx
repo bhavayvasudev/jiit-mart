@@ -1,12 +1,5 @@
 import React from "react";
-import { 
-  LayoutDashboard, 
-  UtensilsCrossed, 
-  Printer, 
-  Settings, 
-  LogOut, 
-  Store 
-} from "lucide-react";
+import { LayoutDashboard, UtensilsCrossed, Printer, Settings, LogOut, Store } from "lucide-react";
 
 export default function OwnerSidebar({ activeTab, setActiveTab, onLogout }) {
   const menuItems = [

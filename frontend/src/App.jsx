@@ -168,7 +168,7 @@ export default function App() {
         */}
         <CustomCursor /> 
         <OwnerLayout>
-          <OwnerDashboard />
+          <OwnerDashboard onLogout={handleSignOut} />
         </OwnerLayout>
       </>
     );
