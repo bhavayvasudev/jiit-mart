@@ -15,7 +15,6 @@ import MessMenu from "./pages/MessMenu";
 /* ======================
    OWNER PAGES
 ====================== */
-import OwnerLayout from "./owner/layout/OwnerLayout";
 import OwnerDashboard from "./owner/pages/OwnerDashboard";
 
 /* ======================
@@ -124,6 +123,22 @@ export default function App() {
     });
   };
 
+  // 👇 NEW: Update Quantity Handler
+  const updateQuantity = (idx, change) => {
+    setCart(prev => prev.map((item, i) => {
+      if (i === idx) {
+        const newQty = Math.max(1, (item.qty || 1) + change);
+        return { ...item, qty: newQty };
+      }
+      return item;
+    }));
+  };
+
+  // 👇 NEW: Remove Item Handler
+  const removeFromCart = (idx) => {
+    setCart(prev => prev.filter((_, i) => i !== idx));
+  };
+
   const placeOrder = () => {
     if (!selectedLocation) return alert("Select location");
     setLoading(true);
@@ -163,13 +178,8 @@ export default function App() {
   if (appMode === "owner") {
     return (
       <>
-        {/* 👇 FIXED: Added CustomCursor here. 
-            Without this, index.css hides the cursor, but nothing replaces it. 
-        */}
-        <CustomCursor /> 
-        <OwnerLayout>
-          <OwnerDashboard onLogout={handleSignOut} />
-        </OwnerLayout>
+        <CustomCursor />
+        <OwnerDashboard onLogout={handleSignOut} />
       </>
     );
   }
@@ -215,6 +225,13 @@ export default function App() {
       {view === "cart" && (
         <Cart
           cart={cart}
+          // 👇 FIXED: Passing all missing props here
+          printFile={printFile}
+          setPrintFile={setPrintFile}
+          updateQuantity={updateQuantity}
+          removeFromCart={removeFromCart}
+          savedLocations={savedLocations}
+          setSavedLocations={setSavedLocations}
           selectedLocation={selectedLocation}
           setSelectedLocation={setSelectedLocation}
           paymentMode={paymentMode}
