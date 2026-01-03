@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, ShoppingBag, Minus, Plus, Trash2, MapPin, X, CreditCard, Banknote } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Minus, Plus, Trash2, MapPin, X, CreditCard, Banknote, AlertCircle, Store } from "lucide-react";
 
 export default function Cart({
   cart, printFile, setPrintFile, updateQuantity, removeFromCart,
@@ -9,8 +9,22 @@ export default function Cart({
   const [isAddingLocation, setIsAddingLocation] = useState(false);
   const [newLocation, setNewLocation] = useState("");
 
+  /* --- BUSINESS RULES CONFIGURATION --- */
+  const MIN_ORDER_VALUE = 50; // Feature 5: Minimum Order
+  const IS_SHOP_OPEN = true;   // Feature 5: Availability (Fetch this from props/backend later)
+
   const itemTotal = cart.reduce((s, i) => s + (i.price * (i.qty || 1)), 0) + (printFile ? printFile.cost : 0);
-  const grandTotal = itemTotal + 5;
+  const deliveryCharge = 5;
+  const grandTotal = itemTotal + deliveryCharge;
+
+  // Validation Logic
+  const isMinOrderMet = itemTotal >= MIN_ORDER_VALUE;
+  const canCheckout = 
+    IS_SHOP_OPEN && 
+    isMinOrderMet && 
+    selectedLocation && 
+    !loading && 
+    (cart.length > 0 || printFile);
 
   const handleSaveLocation = () => {
     if (!newLocation.trim()) return;
@@ -117,11 +131,35 @@ export default function Cart({
               <h3 className="text-lg font-semibold mb-4 text-foreground">Bill Details</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between text-muted-foreground"><span>Item Total</span><span>₹{itemTotal}</span></div>
-                <div className="flex justify-between text-muted-foreground"><span>Delivery</span><span>₹5</span></div>
+                <div className="flex justify-between text-muted-foreground"><span>Delivery</span><span>₹{deliveryCharge}</span></div>
                 <div className="border-t border-border my-2 pt-2 flex justify-between text-lg font-bold text-foreground"><span>Grand Total</span><span>₹{grandTotal}</span></div>
               </div>
-              <button onClick={placeOrder} disabled={loading || (cart.length === 0 && !printFile) || !selectedLocation} className="mt-6 w-full rounded-xl bg-primary py-4 font-bold text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-transform active:scale-[0.98] flex justify-center items-center gap-2">
-                {loading ? "Processing..." : `Pay ₹${grandTotal}`}
+
+              {/* CHECKOUT VALIDATION ALERTS */}
+              <div className="mt-4 space-y-2">
+                {!IS_SHOP_OPEN && (
+                  <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-xl text-sm font-bold flex items-center gap-2">
+                    <Store size={16} /> Shop is currently closed.
+                  </div>
+                )}
+                {IS_SHOP_OPEN && !isMinOrderMet && (cart.length > 0 || printFile) && (
+                  <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 rounded-xl text-sm font-bold flex items-center gap-2">
+                    <AlertCircle size={16} /> Min order value is ₹{MIN_ORDER_VALUE}
+                  </div>
+                )}
+                {IS_SHOP_OPEN && isMinOrderMet && !selectedLocation && (
+                  <div className="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-xl text-sm font-bold flex items-center gap-2">
+                    <MapPin size={16} /> Select a location to continue.
+                  </div>
+                )}
+              </div>
+
+              <button 
+                onClick={placeOrder} 
+                disabled={!canCheckout} 
+                className="mt-4 w-full rounded-xl bg-primary py-4 font-bold text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-transform active:scale-[0.98] flex justify-center items-center gap-2"
+              >
+                {loading ? "Processing...." : `Pay ₹${grandTotal}`}
               </button>
             </div>
           </div>

@@ -1,23 +1,28 @@
 const mongoose = require('mongoose');
 
 const OrderSchema = new mongoose.Schema({
-  studentName: { type: String, default: "Student" }, // e.g., "Rahul (B-304)"
+  student: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User', 
+    required: true 
+  },
   items: [
     {
+      product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
       name: String,
-      qty: Number,
-      price: Number
+      price: Number,
+      quantity: Number
     }
   ],
   totalAmount: { type: Number, required: true },
-  location: { type: String, required: true }, // e.g., "Hostel H-104"
-  paymentMethod: { type: String, enum: ['UPI', 'CASH'], default: 'UPI' },
-  status: { 
-    type: String, 
-    enum: ['Pending', 'Preparing', 'Ready', 'Completed', 'Cancelled'], 
-    default: 'Pending' 
+  deliveryCharge: { type: Number, default: 5 },
+  location: { type: String, required: true }, // Hostel Room / Landmark
+  status: {
+    type: String,
+    enum: ['PENDING', 'ACCEPTED', 'PREPARING', 'READY', 'COMPLETED', 'REJECTED', 'CANCELLED'],
+    default: 'PENDING'
   },
-  printFile: { type: String } // URL to PDF if this is a print order
+  paymentMethod: { type: String, default: 'CASH_ON_DELIVERY' } // No Online Payment
 }, { timestamps: true });
 
 module.exports = mongoose.model('Order', OrderSchema);
