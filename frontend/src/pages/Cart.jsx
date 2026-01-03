@@ -159,7 +159,7 @@ export default function Cart({
                 disabled={!canCheckout} 
                 className="mt-4 w-full rounded-xl bg-primary py-4 font-bold text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-transform active:scale-[0.98] flex justify-center items-center gap-2"
               >
-                {loading ? "Processing...." : `Pay ₹${grandTotal}`}
+                {loading ? "Processing....." : `Pay ₹${grandTotal}`}
               </button>
             </div>
           </div>
